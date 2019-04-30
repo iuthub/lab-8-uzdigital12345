@@ -6,5 +6,5 @@
                 <li class="active"><a href="{{ route('admin.index') }}">Posts</a></li>
             </ul>
         </div>
-    </div><!-- /.container-fluid -->
+    </div>
 </nav>

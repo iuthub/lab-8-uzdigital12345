@@ -1,67 +1,57 @@
 <?php
-
 namespace App\Http\Controllers;
-
 use App\Post;
 use Illuminate\Http\Request;
-
 use App\Http\Requests;
 use Illuminate\Session\Store;
-
 class PostController extends Controller
 {
-    public function getIndex(Store $session)
+    public function getIndex()
     {
-        $post = new Post();
-        $posts = $post->getPosts($session);
+        $post = resolve('App\Post');
+        $posts = $post->getPosts();
         return view('blog.index', ['posts' => $posts]);
     }
-
-    public function getAdminIndex(Store $session)
+    public function getAdminIndex()
     {
-        $post = new Post();
-        $posts = $post->getPosts($session);
+        $post = resolve('App\Post');
+        $posts = $post->getPosts();
         return view('admin.index', ['posts' => $posts]);
     }
-
-    public function getPost(Store $session, $id)
+    public function getPost($id)
     {
-        $post = new Post();
-        $post = $post->getPost($session, $id);
+        $post = resolve('App\Post');
+        $post = $post->getPost($id);
         return view('blog.post', ['post' => $post]);
     }
-
     public function getAdminCreate()
     {
         return view('admin.create');
     }
-
-    public function getAdminEdit(Store $session, $id)
+    public function getAdminEdit($id)
     {
-        $post = new Post();
-        $post = $post->getPost($session, $id);
+        $post = resolve('App\Post');
+        $post = $post->getPost($id);
         return view('admin.edit', ['post' => $post, 'postId' => $id]);
     }
-
-    public function postAdminCreate(Store $session, Request $request)
+    public function postAdminCreate(Request $request)
     {
         $this->validate($request, [
             'title' => 'required|min:5',
             'content' => 'required|min:10'
         ]);
-        $post = new Post();
-        $post->addPost($session, $request->input('title'), $request->input('content'));
+        $post = resolve('App\Post');
+        $post->addPost($request->input('title'), $request->input('content'));
         return redirect()->route('admin.index')->with('info', 'Post created, Title is: ' . $request->input('title'));
     }
-
-    public function postAdminUpdate(Store $session, Request $request)
+    public function postAdminUpdate(Request $request)
     {
         $this->validate($request, [
             'title' => 'required|min:5',
             'content' => 'required|min:10'
         ]);
-        $post = new Post();
-        $post->editPost($session, $request->input('id'), $request->input('title'), $request->input('content'));
+        $post = resolve('App\Post');
+        $post->editPost($request->input('id'), $request->input('title'), $request->input('content'));
         return redirect()->route('admin.index')->with('info', 'Post edited, new Title is: ' . $request->input('title'));
     }
 }
